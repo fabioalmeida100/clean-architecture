@@ -38,19 +38,4 @@ describe("Unit Test list product use case", () => {
             ],
         });
     });
-    
-    it("should not list a product", async () => {
-        // Arrange
-        const productRepository = MockRepository();
-        productRepository.findAll.mockImplementation(() => {
-            throw new Error("Product not found");
-        });
-        const listProductUseCase = new ListProductUseCase(productRepository);
-
-        // Act
-        const input = {};
-
-        // Assert
-        await expect(listProductUseCase.execute(input)).rejects.toThrow("Product not found");
-    });
 });

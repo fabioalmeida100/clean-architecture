@@ -8,8 +8,8 @@ import request from "supertest";
 describe("E2E test for customer", () => {
   beforeEach(async () => {
     await sequelize.sync({ force: true });
-    await createProduct("a", "Product 1", 100);
-    await createProduct("a", "Product 2", 200);
+    await createProduct("a", "Product 1", 100.15);
+    await createProduct("a", "Product 2", 200.25);
   });
 
   afterAll(async () => {
@@ -30,6 +30,17 @@ describe("E2E test for customer", () => {
     expect(response.body.price).toBe(190.99);
   });
   
+  it("should not create a product with invalid price", async () => {
+    const response = await request(app)
+      .post("/product")
+      .send({
+        name: "Product XPTO",
+        price: -190.99,
+      });
+
+    expect(response.status).toBe(500);
+  });
+  
   it("should list a product", async () => {
     const response = await request(app)
       .get("/product")
@@ -38,9 +49,9 @@ describe("E2E test for customer", () => {
     expect(response.status).toBe(200);
     expect(response.body.products.length).toBe(2);
     expect(response.body.products[0].name).toBe("Product 1");
-    expect(response.body.products[0].price).toBe(100);
+    expect(response.body.products[0].price).toBe(100.15);
     expect(response.body.products[1].name).toBe("Product 2");
-    expect(response.body.products[1].price).toBe(200);
+    expect(response.body.products[1].price).toBe(200.25);
   });   
 });
 
